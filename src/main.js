@@ -56,6 +56,11 @@ const handleAnimeClick = async (id) => {
 
 const showAllAnimes = async () => {
     const animes = await getFetchAnimeList();
+
+    if (!animes || animes.length === 0) {
+        console.warn("No se pudieron cargar animes");
+        return;
+    }
     renderAnimeList(animes, handleAnimeClick);
 };
 

@@ -35,8 +35,8 @@ export const showAnimeDetails = (anime, isFavorite) => {
     const pendingList = getList("animePending");
     const collectionList = getList("animeCollection");
 
-    const isPending = pendingList.some(anime => a._mal_id === anime._mal_id);
-    const isCollection = collectionList.some(anime => a.mal_id === anime.mal_id);
+    const isPending = pendingList.some(a => a.mal_id === anime.mal_id);
+    const isCollection = collectionList.some(a => a.mal_id === anime.mal_id);
 
     document.getElementById("pending-btn").textContent = isPending ? "Quitar de pendientes" : "Agregar a pendientes";
     document.getElementById("collection-btn").textContent = isCollection ? "Quitar de colección" : "Añadir a colección";

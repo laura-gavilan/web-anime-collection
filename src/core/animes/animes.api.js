@@ -1,4 +1,4 @@
-const API_URL = "https://api.jikan.moe/v4/anime";
+const API_URL = "https://kitsu.io/api/edge/anime";
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -12,8 +12,15 @@ export const getFetchAnimeList = async () => {
             throw new Error("Error en la API");
         };
 
-        const data = await response.json();
-        return data.data || [];
+        const json = await response.json();
+        return json.data.map(item => ({
+            mal_id: item.id,
+            title: item.attributes.titles?.en_jp || item.attributes.titles?.en || item.attributes.slug,
+            images: { jpg: { image_url: item.attributes.posterImage?.small } },
+            synopsis: item.attributes.synopsis,
+            episodes: item.attributes.episodeCount,
+            score: item.attributes.averageRating
+        }));
     }
     catch (error) {
         console.error("Error al obtener la lista de animes", error);
@@ -26,8 +33,19 @@ export const getAnimeById = async (id) => {
         await delay(400);
 
         const response = await fetch(`${API_URL}/${id}`);
-        const data = await response.json();
-        return data.data;
+        const json = await response.json();
+
+        const anime = json.data;
+
+        return {
+            mal_id: anime.id,
+            title: anime.attributes.titles?.en_jp || anime.attributes.titles?.en,
+            images: { jpg: { image_url: anime.attributes.posterImage?.small } },
+            synopsis: anime.attributes.synopsis,
+            episodes: anime.attributes.episodeCount,
+            score: anime.attributes.averageRating,
+            status: anime.attributes.status
+        };
     } catch (error) {
         console.error("Error al obtener anime", error);
         throw error;
@@ -39,8 +57,16 @@ export const searchAnime = async (query) => {
         await delay(400);
 
         const response = await fetch(`${API_URL}?q=${encodeURIComponent(query)}&limit=12`);
-        const data = await response.json();
-        return data.data;
+        const json = await response.json();
+
+        return json.data.map(item => ({
+            mal_id: item.id,
+            title: item.attributes.titles?.en_jp || item.attributes.titles?.en,
+            images: { jpg: { image_url: item.attributes.posterImage?.small } },
+            synopsis: item.attributes.synopsis,
+            episodes: item.attributes.episodeCount,
+            score: item.attributes.averageRating
+        }));
     } catch (error) {
         console.error("Error al buscar anime:", error)
         return [];
