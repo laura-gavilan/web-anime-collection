@@ -1,0 +1,229 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f6fa;
+    color: #333;
+    padding: 1rem;
+}
+
+/* Encabezado */
+header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+header h1 {
+    font-size: 2rem;
+    color: #2d98da;
+}
+
+#search-input {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+#toggle-favorites-button {
+    padding: 0.5rem 1rem;
+    background: #fed330;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Navegación */
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+nav button {
+    background: #dff9fb;
+    border: 1px solid #7ed6df;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+nav button:hover {
+    background: #c7ecee;
+}
+
+/* Lista de animes */
+#anime-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+/* Tarjetas de anime */
+.anime-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+    padding: 0.5rem;
+    transition: transform 0.2s;
+    position: relative;
+}
+
+.anime-card:hover {
+    transform: scale(1.02);
+}
+
+.anime-card img {
+    height: auto;
+    border-radius: 8px;
+}
+
+.anime-card h3 {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+}
+
+/* Botón "Quitar" */
+.anime-card button {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: #e84118;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.3rem 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+/* Detalles del anime */
+#anime-details {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#anime-details img {
+    width: 200px;
+    display: block;
+    margin: 1rem 0;
+}
+
+#anime-details button {
+    margin-right: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#favorite-button {
+    background: #fbc531;
+}
+
+#back-button {
+    background: #00a8ff;
+    color: white;
+}
+
+.hidden {
+    display: none;
+}
+
+#forms-section {
+    display: flex;
+    max-width: 400px;
+    margin: 1rem auto;
+    gap: 40px;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+}
+
+/* Formularios */
+#forms-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Títulos */
+#forms-section h2 {
+    text-align: center;
+    color: #2d98da;
+    margin-bottom: 1rem;
+}
+
+/* Inputs */
+#forms-section input[type="text"],
+#forms-section input[type="password"] {
+    padding: 0.7rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+#forms-section input[type="text"]:focus,
+#forms-section input[type="password"]:focus {
+    outline: none;
+    border-color: #2d98da;
+}
+
+/* Botones */
+#forms-section button[type="submit"] {
+    background: #2d98da;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#forms-section button[type="submit"]:hover {
+    background: #1c6fb8;
+}
+
+#forms-section button[type="button"] {
+    background: #ccc;
+    color: #333;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#forms-section button[type="button"]:hover {
+    background: #aaa;
+}
+
+.hidden {
+    display: none;
+}
+
+.form-link {
+    color: #3b82f6;
+    cursor: pointer;
+    font-weight: bold;
+}

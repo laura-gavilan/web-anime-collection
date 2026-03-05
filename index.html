@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script type="module" defer src="/src/main.js"></script>
+  <link rel="stylesheet" href="/src/styles/index.css" />
+  <title>web-anime</title>
+</head>
+
+<body>
+  <header>
+    <h1>Mi colección de anime</h1>
+    <img src="/src/media/images/Anime-group.avif" alt="Dibujos de anime">
+    <input type="text" id="search-input" placeholder="Buscar anime">
+  </header>
+
+  <nav>
+    <button id="show-all">Ver todos</button>
+    <button id="show-favorites">Favoritos</button>
+    <button id="show-pending">Pendientes</button>
+    <button id="show-viewed">Vistos</button>
+    <button id="show-collection">Colección</button>
+    <button id="register-btn">Registro</button>
+    <button id="login-btn">Iniciar sesión</button>
+  </nav>
+
+  <main>
+    <section id="anime-list"></section>
+    <section id="anime-details" class="hidden">
+      <div>
+        <button id="favorite-btn">⭐ Agregar a Favoritos</button>
+        <button id="pending-btn">Agregar a pendientes</button>
+        <button id="collection-btn">Agregar a colección</button>
+        <button id="back-btn">Volver</button>
+      </div>
+
+      <div class="details-container">
+        <img id="anime-image" alt="Imagen del anime">
+        <h2 id="anime-title"></h2>
+
+        <p><strong>Episodios:</strong> <span id="anime-episodes"></span></p>
+        <p><strong>Puntuación:</strong> <span id="anime-score"></span></p>
+        <p><strong>Estado:</strong> <span id="anime-status"></span></p>
+
+        <p id="anime-synopsis"></p>
+      </div>
+
+    </section>
+    <section id="forms-section">
+      <form id="register-form" class="hidden">
+        <h2>Registro</h2>
+        <input type="text" id="register-username" placeholder="Usuario" required>
+        <input type="password" id="register-password" placeholder="Contraseña" required>
+        <button type="submit">Registrarse</button>
+
+        <p>¿Ya tienes cuenta?
+          <span id="go-login" class="form-link">Iniciar sesión</span>
+        </p>
+      </form>
+
+      <form id="login-form" class="hidden">
+        <h2>Iniciar sesión</h2>
+        <input type="text" id="login-username" placeholder="Usuario" required>
+        <input type="password" id="login-password" placeholder="Contraseña" required>
+        <button type="submit">Iniciar sesión</button>
+
+        <p>¿No tienes cuenta?
+          <span id="go-register" class="form-link">Registrarse</span>
+        </p>
+      </form>
+    </section>
+
+  </main>
+
+</body>
+
+</html>
