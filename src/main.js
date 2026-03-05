@@ -46,6 +46,7 @@ const toggleFavorite = (id) => {
 
 const handleAnimeClick = async (id) => {
     const anime = await getAnimeById(id);
+    console.log("ID recibido", id)
 
     if (anime) {
         currentAnimeId = anime.mal_id;
@@ -75,9 +76,15 @@ const handleFavoriteClick = () => {
 const showFavorites = async () => {
     const favoritesId = loadFavorites();
 
-    const favorites = await Promise.all(
-        favoritesId.map((id) => getAnimeById(id))
-    );
+    const favorites = [];
+    for (const id of favoritesId) {
+        try {
+            const anime = await getAnimeById(id);
+            if (anime) favorites.push(anime);
+        } catch (error) {
+            console.error("Error cargando favorito", id);
+        }
+    };
 
     const favoritesList = favorites.filter((anime) => anime);
     renderAnimeList(favoritesList, handleAnimeClick);
@@ -122,17 +129,24 @@ document.getElementById("back-btn").addEventListener("click", hiddeAnimeDetails)
 document.getElementById("favorite-btn").addEventListener("click", handleFavoriteClick);
 document.getElementById("pending-btn").addEventListener("click", () => handleListButton(PENDING_LIST));
 document.getElementById("collection-btn").addEventListener("click", () => handleListButton(COLLECTION_LIST));
+
+let searchTimeout;
+
 document.getElementById("search-input").addEventListener("input", (event) => {
     const value = event.target.value.trim();
 
-    if (value.length >= 2) {
-        handleSearch(value);
-    } else {
-        showAllAnimes();
-    }
+    clearTimeout(searchTimeout);
+
+    searchTimeout = setTimeout(() => {
+        if (value.length >= 2) {
+            handleSearch(value);
+        } else {
+            showAllAnimes();
+        }
+    }, 500);
 });
 
-showAllAnimes();
+
 
 document.getElementById("show-favorites").addEventListener("click", () => {
     hideForms();
