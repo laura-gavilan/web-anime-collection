@@ -10,57 +10,43 @@ const loginBtn = document.getElementById("login-btn");
 const goLogin = document.getElementById("go-login");
 const goRegister = document.getElementById("go-register");
 
-
 const FAVORITES_LIST = "animeFavorites";
 const PENDING_LIST = "animePending";
 const COLLECTION_LIST = "animeCollection";
 
-
-
 let currentAnimeId = null;
 
-// ================= FAVORITES =================
+// ================= FAVORITOS =================
+const loadFavorites = () => JSON.parse(localStorage.getItem(FAVORITES_LIST)) || [];
+const saveFavorites = (favorites) => localStorage.setItem(FAVORITES_LIST, JSON.stringify(favorites));
 
-const loadFavorites = () =>
-    JSON.parse(localStorage.getItem(FAVORITES_LIST)) || [];
+const isFavorite = (anime) => loadFavorites().some(a => a.mal_id === anime.mal_id);
 
-const saveFavorites = (favorites) =>
-    localStorage.setItem(FAVORITES_LIST, JSON.stringify(favorites));
-
-const isFavorite = (id) => loadFavorites().includes(id);
-
-const toggleFavorite = (id) => {
+const toggleFavorite = (anime) => {
     let favorites = loadFavorites();
-
-    if (favorites.includes(id)) {
-        favorites = favorites.filter((fav) => fav !== id);
+    if (favorites.some(a => a.mal_id === anime.mal_id)) {
+        favorites = favorites.filter(a => a.mal_id !== anime.mal_id);
     } else {
-        favorites.push(id);
+        favorites.push(anime);
     }
-
     saveFavorites(favorites);
 };
 
 // ================= DETALLES =================
-
-
 const handleAnimeClick = async (id) => {
-    const anime = await getAnimeById(id);
-    console.log("ID recibido", id)
-
-    if (anime) {
+    try {
+        const anime = await getAnimeById(id);
+        if (!anime) return;
         currentAnimeId = anime.mal_id;
-        showAnimeDetails(anime, isFavorite(anime.mal_id));
+        showAnimeDetails(anime, isFavorite(anime));
+    } catch (error) {
+        console.error("Error al mostrar detalles:", error);
     }
 };
 
 const showAllAnimes = async () => {
     const animes = await getFetchAnimeList();
-
-    if (!animes || animes.length === 0) {
-        console.warn("No se pudieron cargar animes");
-        return;
-    }
+    if (!animes || animes.length === 0) return;
     renderAnimeList(animes, handleAnimeClick);
 };
 
@@ -70,88 +56,65 @@ const handleSearch = async (query) => {
 };
 
 // ================= FAVORITE BUTTON =================
-
-const handleFavoriteClick = () => {
+const handleFavoriteClick = async () => {
     if (!currentAnimeId) return;
-
-    toggleFavorite(currentAnimeId);
-    handleAnimeClick(currentAnimeId);
+    const anime = await getAnimeById(currentAnimeId);
+    if (!anime) return;
+    toggleFavorite(anime);
+    showAnimeDetails(anime, isFavorite(anime));
 };
 
-const showFavorites = async () => {
-    const favoritesId = loadFavorites();
-
-    const favorites = [];
-    for (const id of favoritesId) {
-        try {
-            const anime = await getAnimeById(id);
-            if (anime) favorites.push(anime);
-        } catch (error) {
-            console.error("Error cargando favorito", id);
-        }
-    };
-
-    const favoritesList = favorites.filter((anime) => anime);
-    renderAnimeList(favoritesList, handleAnimeClick);
+const showFavorites = () => {
+    const favorites = loadFavorites();
+    renderAnimeList(favorites, handleAnimeClick, (mal_id) => {
+        // quitar de favoritos
+        let favs = loadFavorites();
+        favs = favs.filter(a => a.mal_id !== mal_id);
+        saveFavorites(favs);
+        showFavorites();
+    });
 };
 
 // ================= LISTAS =================
-
 const toggleList = (key, anime) => {
     const list = getList(key);
-    const exists = list.some((a) => a.mal_id === anime.mal_id);
-
-    if (exists) {
-        removeList(key, anime.mal_id);
-    } else {
-        saveList(key, anime);
-    }
+    const exists = list.some(a => a.mal_id === anime.mal_id);
+    if (exists) removeList(key, anime.mal_id);
+    else saveList(key, anime);
 };
 
 const handleListButton = async (key) => {
     if (!currentAnimeId) return;
-
     const anime = await getAnimeById(currentAnimeId);
-
-    if (anime) {
-        toggleList(key, anime);
-        handleAnimeClick(currentAnimeId);
-    }
+    if (!anime) return;
+    toggleList(key, anime);
+    handleAnimeClick(currentAnimeId);
 };
 
 const renderList = (key) => {
     const list = getList(key);
-
     renderAnimeList(list, handleAnimeClick, (id) => {
         removeList(key, id);
         renderList(key);
     });
-
     hiddeAnimeDetails();
 };
 
+// ================= EVENTOS =================
 document.getElementById("back-btn").addEventListener("click", hiddeAnimeDetails);
 document.getElementById("favorite-btn").addEventListener("click", handleFavoriteClick);
 document.getElementById("pending-btn").addEventListener("click", () => handleListButton(PENDING_LIST));
 document.getElementById("collection-btn").addEventListener("click", () => handleListButton(COLLECTION_LIST));
 
 let searchTimeout;
-
 document.getElementById("search-input").addEventListener("input", (event) => {
     const value = event.target.value.trim();
-
     clearTimeout(searchTimeout);
-
     searchTimeout = setTimeout(() => {
-        if (value.length >= 2) {
-            handleSearch(value);
-        } else {
-            showAllAnimes();
-        }
+        if (value.length >= 2) handleSearch(value);
+        else showAllAnimes();
     }, 500);
 });
-
-
 
 document.getElementById("show-favorites").addEventListener("click", () => {
     hideForms();
@@ -159,7 +122,7 @@ document.getElementById("show-favorites").addEventListener("click", () => {
 });
 
 document.getElementById("show-pending").addEventListener("click", () => {
-    hideForms()
+    hideForms();
     renderList(PENDING_LIST);
 });
 
@@ -174,46 +137,25 @@ document.getElementById("show-all").addEventListener("click", () => {
 });
 
 showAllAnimes();
-// ================= FORM TOGGLE =================
 
+// ================= FORM TOGGLE =================
 document.getElementById("register-btn").addEventListener("click", () => {
     registerForm.classList.remove("hidden");
     loginForm.classList.add("hidden");
-    // registerForm.scrollIntoView({ behavior: "smooth" });
 });
-
 document.getElementById("login-btn").addEventListener("click", () => {
     loginForm.classList.remove("hidden");
     registerForm.classList.add("hidden");
-    // loginForm.scrollIntoView({ behavior: "smooth" });
 });
-
-const showRegister = () => {
-    registerForm.classList.remove("hidden");
-    loginForm.classList.add("hidden");
-};
-
-const showLogin = () => {
-    loginForm.classList.remove("hidden");
-    registerForm.classList.add("hidden");
-};
-
-const hideForms = () => {
-    registerForm.classList.add("hidden");
-    loginForm.classList.add("hidden");
-};
-
+const showRegister = () => { registerForm.classList.remove("hidden"); loginForm.classList.add("hidden"); };
+const showLogin = () => { loginForm.classList.remove("hidden"); registerForm.classList.add("hidden"); };
+const hideForms = () => { registerForm.classList.add("hidden"); loginForm.classList.add("hidden"); };
 registerBtn.addEventListener("click", showRegister);
 loginBtn.addEventListener("click", showLogin);
-
 goLogin.addEventListener("click", showLogin);
 goRegister.addEventListener("click", showRegister);
 
-
-
-
-//VISTOS//
-
+// ================= VISTOS =================
 document.getElementById("show-viewed").addEventListener("click", () => {
     hideForms();
     const user = getUser();
@@ -221,7 +163,3 @@ document.getElementById("show-viewed").addEventListener("click", () => {
     const viewAnime = JSON.parse(localStorage.getItem(`vista_${user}`)) || [];
     renderAnimeList(viewAnime, handleAnimeClick);
 });
-
-
-
-
